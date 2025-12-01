@@ -18,6 +18,11 @@ namespace MySmartHome.Devices
                     isOn = true;
                     Console.WriteLine("Heater turned on.");
                 }
+                else if(temperature > minTemperature && isOn)
+                {
+                    isOn = false;
+                    Console.WriteLine("Heater turned off.");
+                }
             }
         }
 

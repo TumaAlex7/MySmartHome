@@ -15,14 +15,22 @@ namespace SmartHomeSystem
 
         public void RegisterDevice(ISmartDevice device)
         {
-            if(device != null)
+            if (device == null)
+            {
+                Console.WriteLine("Device registration failed because device is null.");
+                logger.Log("Device registration failed because device is null.");
+                return;
+            }
+            if (!devices.Contains(device))
             {
                 devices.Add(device);
                 Console.WriteLine($"Device {device.GetType().Name} registered successfully.");
+                logger.Log($"Device {device.GetType().Name} registered successfully.");
             }
             else
             {
                 Console.WriteLine("Device registration failed.");
+                logger.Log($"Device {device.GetType().Name} registration failed because device already registered.");
             }
         }
 
@@ -30,28 +38,61 @@ namespace SmartHomeSystem
         {
             Console.WriteLine($"Event: Daytime changed to {timeOfDay}.");
             logger.Log($"Daytime changed to {timeOfDay}.");
-            OnDayTimeChanged?.Invoke(timeOfDay);
+            foreach (var handler in OnDayTimeChanged.GetInvocationList())
+            {
+                try
+                {
+                    ((Action<string>)handler)(timeOfDay);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error in event handler: {ex.Message}");
+                    logger.Log($"Error in event handler: {ex.Message}. Handler: {handler.Method.Name}");
+                }
+            }
         }
 
         public void ChangeTemperature(int temperature)
         {
             Console.WriteLine($"Event: Temperature changed to {temperature}°C.");
             logger.Log($"Temperature changed to {temperature}°C.");
-            OnTemperatureChanged?.Invoke(temperature);
+            foreach (var handler in OnTemperatureChanged.GetInvocationList())
+            {
+                try
+                {
+                    ((Action<int>)handler)(temperature);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error in event handler: {ex.Message}");
+                    logger.Log($"Error in event handler: {ex.Message}. Handler: {handler.Method.Name}");
+                }
+            }
         }
 
         public void DetectMotion()
         {
             Console.WriteLine("Event: Motion detected.");
             logger.Log("Motion detected.");
-            OnMotionDetected?.Invoke();
+            foreach (var handler in OnMotionDetected.GetInvocationList())
+            {
+                try
+                {
+                    ((Action)handler)();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error in event handler: {ex.Message}");
+                    logger.Log($"Error in event handler: {ex.Message}. Handler: {handler.Method.Name}");
+                }
+            }
         }
 
         public void TriggerDevice(string deviceName, string command)
         {
-            foreach(var device in devices)
+            foreach (var device in devices)
             {
-                if(device.GetType().Name == deviceName)
+                if (device.GetType().Name == deviceName)
                 {
                     device.ExecuteCommand(command);
                     // Console message is not needed because the device will print its own message.
