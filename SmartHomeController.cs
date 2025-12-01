@@ -24,13 +24,13 @@ namespace SmartHomeSystem
             if (!devices.Contains(device))
             {
                 devices.Add(device);
-                Console.WriteLine($"Device {device.GetType().Name} registered successfully.");
-                logger.Log($"Device {device.GetType().Name} registered successfully.");
+                Console.WriteLine($"Device {device.Name} registered successfully.");
+                logger.Log($"Device {device.Name} registered successfully.");
             }
             else
             {
                 Console.WriteLine("Device registration failed.");
-                logger.Log($"Device {device.GetType().Name} registration failed because device already registered.");
+                logger.Log($"Device {device.Name} registration failed because device already registered.");
             }
         }
 
@@ -38,11 +38,18 @@ namespace SmartHomeSystem
         {
             Console.WriteLine($"Event: Daytime changed to {timeOfDay}.");
             logger.Log($"Daytime changed to {timeOfDay}.");
+            if(OnDayTimeChanged == null)
+            {
+                Console.WriteLine("Event called but no handlers are registered.");
+                logger.Log("Event called but no handlers are registered.");
+                return;
+            }
             foreach (var handler in OnDayTimeChanged.GetInvocationList())
             {
                 try
                 {
                     ((Action<string>)handler)(timeOfDay);
+                    logger.Log($"Event handled by {handler.Method.Name} successfully.");
                 }
                 catch (Exception ex)
                 {
@@ -56,11 +63,18 @@ namespace SmartHomeSystem
         {
             Console.WriteLine($"Event: Temperature changed to {temperature}°C.");
             logger.Log($"Temperature changed to {temperature}°C.");
+            if(OnTemperatureChanged == null)
+            {
+                Console.WriteLine("Event called but no handlers are registered.");
+                logger.Log("Event called but no handlers are registered.");
+                return;
+            }
             foreach (var handler in OnTemperatureChanged.GetInvocationList())
             {
                 try
                 {
                     ((Action<int>)handler)(temperature);
+                    logger.Log($"Event handled by {handler.Method.Name} successfully.");
                 }
                 catch (Exception ex)
                 {
@@ -74,11 +88,18 @@ namespace SmartHomeSystem
         {
             Console.WriteLine("Event: Motion detected.");
             logger.Log("Motion detected.");
+            if(OnMotionDetected == null)
+            {
+                Console.WriteLine("Event called but no handlers are registered.");
+                logger.Log("Event called but no handlers are registered.");
+                return;
+            }
             foreach (var handler in OnMotionDetected.GetInvocationList())
             {
                 try
                 {
                     ((Action)handler)();
+                    logger.Log($"Event handled by {handler.Method.Name} successfully.");
                 }
                 catch (Exception ex)
                 {
@@ -90,18 +111,16 @@ namespace SmartHomeSystem
 
         public void TriggerDevice(string deviceName, string command)
         {
-            foreach (var device in devices)
+            var device = devices.FirstOrDefault(d => d.Name == deviceName);
+            if(device == null)
             {
-                if (device.GetType().Name == deviceName)
-                {
-                    device.ExecuteCommand(command);
-                    // Console message is not needed because the device will print its own message.
-                    logger.Log($"Command {command} send to device {deviceName} successfully for execution.");
-                    return;
-                }
+                Console.WriteLine($"Device {deviceName} not found.");
+                logger.Log($"Command {command} not send to device {deviceName} because device not found.");
+                return;
             }
-            Console.WriteLine($"Device {deviceName} not found.");
-            logger.Log($"Command {command} not send to device {deviceName} because device not found.");
+            device.ExecuteCommand(command);
+            // Console message is not needed because the device will print its own message.
+            logger.Log($"Command {command} send to device {deviceName} successfully for execution.");
         }
 
         public void ShowLog()

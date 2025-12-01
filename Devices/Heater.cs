@@ -8,39 +8,35 @@ namespace MySmartHome.Devices
         private int minTemperature = 10;
         private bool isOn;
 
-        public void HandleEvent(string eventType, object eventData)
+        public void TemperatureChanged(int temperature)
         {
-            if(eventType == "TemperatureChanged")
+            if (temperature < minTemperature && !isOn)
             {
-                int temperature = (int)eventData;
-                if(temperature < minTemperature && !isOn)
-                {
-                    isOn = true;
-                    Console.WriteLine("Heater turned on.");
-                }
-                else if(temperature > minTemperature && isOn)
-                {
-                    isOn = false;
-                    Console.WriteLine("Heater turned off.");
-                }
+                isOn = true;
+                Console.WriteLine("Heater turned on.");
+            }
+            else if (temperature > minTemperature && isOn)
+            {
+                isOn = false;
+                Console.WriteLine("Heater turned off.");
             }
         }
 
         public void Configure(Dictionary<string, object> settings)
         {
-            if(settings.ContainsKey("MinTemperature"))
+            if (settings.ContainsKey("MinTemperature"))
                 minTemperature = (int)settings["MinTemperature"];
             Console.WriteLine($"Heater configured: MinTemperature={minTemperature}°C.");
         }
 
         public void ExecuteCommand(string command)
         {
-            if(command == "On")
+            if (command == "On")
             {
                 isOn = true;
                 Console.WriteLine("Heater manually turned on.");
             }
-            else if(command == "Off")
+            else if (command == "Off")
             {
                 isOn = false;
                 Console.WriteLine("Heater manually turned off.");

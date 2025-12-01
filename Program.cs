@@ -22,9 +22,9 @@ namespace SmartHomeSystem
             controller.RegisterDevice(heater);
 
             // Subscribe devices to events
-            controller.OnDayTimeChanged += time => light.HandleEvent("DayTimeChanged", time);
-            controller.OnTemperatureChanged += temp => airConditioner.HandleEvent("TemperatureChanged", temp);
-            controller.OnTemperatureChanged += temp => heater.HandleEvent("TemperatureChanged", temp);
+            controller.OnDayTimeChanged += light.DayTimeChanged;
+            controller.OnTemperatureChanged += airConditioner.TemperatureChanged;
+            controller.OnTemperatureChanged += heater.TemperatureChanged;
 
             // Example of configuring a device
             Dictionary<string, object> acSettings = new Dictionary<string, object>

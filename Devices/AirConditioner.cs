@@ -9,22 +9,19 @@ namespace MySmartHome.Devices
         private int maxTemperature = 25;
         private bool isOn;
 
-        public void HandleEvent(string eventType, object eventData)
+        public void TemperatureChanged(int temperature)
         {
-            if (eventType == "TemperatureChanged")
+            if (temperature > maxTemperature && !isOn)
             {
-                int temperature = (int)eventData;
-                if (temperature > maxTemperature && !isOn)
-                {
-                    isOn = true;
-                    Console.WriteLine("Air Conditioner turned on (High Temperature).");
-                }
-                else if (temperature < minTemperature && isOn)
-                {
-                    isOn = false;
-                    Console.WriteLine("Air Conditioner turned off (Low Temperature).");
-                }
+                isOn = true;
+                Console.WriteLine("Air Conditioner turned on (High Temperature).");
             }
+            else if (temperature < minTemperature && isOn)
+            {
+                isOn = false;
+                Console.WriteLine("Air Conditioner turned off (Low Temperature).");
+            }
+        }
         }
 
         public void Configure(Dictionary<string, object> settings)

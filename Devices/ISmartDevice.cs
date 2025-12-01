@@ -5,7 +5,7 @@ namespace MySmartHome.Devices
 {
     public interface ISmartDevice
     {
-        void HandleEvent(string eventType, object eventData);
+        public string Name { get; set; }
         void Configure(Dictionary<string, object> settings);
         void ExecuteCommand(string command);
     }
