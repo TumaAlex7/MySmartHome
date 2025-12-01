@@ -15,7 +15,15 @@ namespace SmartHomeSystem
 
         public void RegisterDevice(ISmartDevice device)
         {
-            // Implement adding a device to the devices list.
+            if(device != null)
+            {
+                devices.Add(device);
+                Console.WriteLine($"Device {device.GetType().Name} registered successfully.");
+            }
+            else
+            {
+                Console.WriteLine("Device registration failed.");
+            }
         }
 
         public void ChangeDayTime(string timeOfDay)
@@ -27,22 +35,38 @@ namespace SmartHomeSystem
 
         public void ChangeTemperature(int temperature)
         {
-            // Implement triggering the OnTemperatureChanged event and logging the event.
+            Console.WriteLine($"Event: Temperature changed to {temperature}°C.");
+            logger.Log($"Temperature changed to {temperature}°C.");
+            OnTemperatureChanged?.Invoke(temperature);
         }
 
         public void DetectMotion()
         {
-            // Implement triggering the OnMotionDetected event and logging the event.
+            Console.WriteLine("Event: Motion detected.");
+            logger.Log("Motion detected.");
+            OnMotionDetected?.Invoke();
         }
 
         public void TriggerDevice(string deviceName, string command)
         {
-            // Implement finding the device by name, calling ExecuteCommand, and logging.
+            foreach(var device in devices)
+            {
+                if(device.GetType().Name == deviceName)
+                {
+                    device.ExecuteCommand(command);
+                    // Console message is not needed because the device will print its own message.
+                    logger.Log($"Command {command} send to device {deviceName} successfully for execution.");
+                    return;
+                }
+            }
+            Console.WriteLine($"Device {deviceName} not found.");
+            logger.Log($"Command {command} not send to device {deviceName} because device not found.");
         }
 
         public void ShowLog()
         {
-            // Implement showing the event log via logger.
+            logger.ShowLog();
+            Console.WriteLine();
         }
     }
 }

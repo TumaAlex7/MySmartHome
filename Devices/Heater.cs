@@ -10,19 +10,40 @@ namespace MySmartHome.Devices
 
         public void HandleEvent(string eventType, object eventData)
         {
-            // Implement handling "TemperatureChanged" event:
-            // Turn on heater if temperature is below minTemperature.
-            // Turn off heater if temperature is above or equal to minTemperature.
+            if(eventType == "TemperatureChanged")
+            {
+                int temperature = (int)eventData;
+                if(temperature < minTemperature && !isOn)
+                {
+                    isOn = true;
+                    Console.WriteLine("Heater turned on.");
+                }
+            }
         }
 
         public void Configure(Dictionary<string, object> settings)
         {
-            // Implement configuring the minimum temperature for turning on the heater.
+            if(settings.ContainsKey("MinTemperature"))
+                minTemperature = (int)settings["MinTemperature"];
+            Console.WriteLine($"Heater configured: MinTemperature={minTemperature}°C.");
         }
 
         public void ExecuteCommand(string command)
         {
-            // Implement manual control of the heater (turn on/off).
+            if(command == "On")
+            {
+                isOn = true;
+                Console.WriteLine("Heater manually turned on.");
+            }
+            else if(command == "Off")
+            {
+                isOn = false;
+                Console.WriteLine("Heater manually turned off.");
+            }
+            else
+            {
+                Console.WriteLine("Invalid command for Heater");
+            }
         }
     }
 }
