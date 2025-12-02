@@ -12,9 +12,9 @@ namespace SmartHomeSystem
             SmartHomeController controller = new SmartHomeController();
 
             // Create devices
-            Light light = new Light();
-            AirConditioner airConditioner = new AirConditioner();
-            Heater heater = new Heater();
+            Light light = new Light("Light");
+            AirConditioner airConditioner = new AirConditioner("AirConditioner");
+            Heater heater = new Heater("Heater");
 
             // Register devices
             controller.RegisterDevice(light);

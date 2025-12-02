@@ -24,6 +24,7 @@ namespace SmartHomeSystem
             if (!devices.Contains(device))
             {
                 devices.Add(device);
+                device.Logger = logger;
                 Console.WriteLine($"Device {device.Name} registered successfully.");
                 logger.Log($"Device {device.Name} registered successfully.");
             }
@@ -49,7 +50,6 @@ namespace SmartHomeSystem
                 try
                 {
                     ((Action<string>)handler)(timeOfDay);
-                    logger.Log($"Event handled by {handler.Method.Name} successfully.");
                 }
                 catch (Exception ex)
                 {
@@ -74,7 +74,6 @@ namespace SmartHomeSystem
                 try
                 {
                     ((Action<int>)handler)(temperature);
-                    logger.Log($"Event handled by {handler.Method.Name} successfully.");
                 }
                 catch (Exception ex)
                 {
@@ -99,7 +98,6 @@ namespace SmartHomeSystem
                 try
                 {
                     ((Action)handler)();
-                    logger.Log($"Event handled by {handler.Method.Name} successfully.");
                 }
                 catch (Exception ex)
                 {
@@ -119,8 +117,6 @@ namespace SmartHomeSystem
                 return;
             }
             device.ExecuteCommand(command);
-            // Console message is not needed because the device will print its own message.
-            logger.Log($"Command {command} send to device {deviceName} successfully for execution.");
         }
 
         public void ShowLog()
